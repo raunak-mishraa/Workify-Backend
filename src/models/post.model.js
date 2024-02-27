@@ -21,6 +21,10 @@ const postSchema = new Schema({
         type: String,
         required: true,
     },
+    bookmarkedPost:{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    }
 },{timestamps: true});
 
 export const Post = mongoose.model('Post', postSchema);
