@@ -28,7 +28,7 @@ const createPost = asyncHandler(async (req, res) => {
 const myPost = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     // console.log(userId)
-    const posts = await Post.find({client: userId})
+    const posts = await Post.find({client: userId}).sort({createdAt: -1})
     if(!posts){
         throw new ApiError(404, "No post found")
     }

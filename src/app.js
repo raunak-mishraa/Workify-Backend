@@ -6,7 +6,7 @@ const app = express();
 
 //configure
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: "https://freekify.vercel.app",
     credentials: true
 }));
 app.use(express.json('limit', '10kb'));
