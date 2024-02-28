@@ -38,17 +38,23 @@ const userSchema = new Schema(
             required: true,
             default: false
         },
+        profession:{
+            type: String,
+            required: true
+        },
     }
     ,{timestamps:true})
 
     
     userSchema.pre('save', async function(next){
         if(!this.isModified('password')) return next();
-        this.password = bcrypt.hash(this.password, 10)
+        this.password = await bcrypt.hash(this.password, 10)
+        // console.log(this)
         next()
     })
     
     userSchema.methods.isCorrectPassword = async function(password){
+        // console.log(this.password,password)
         return await bcrypt.compare(password, this.password)
     }
 
@@ -73,7 +79,7 @@ const userSchema = new Schema(
             },
             process.env.REFRESH_TOKEN_SECRET,
             {
-                expiresIn: process.env.REFRESH_TOKEN_SECRET
+                expiresIn: process.env.REFRESH_TOKEN_EXPIRY
             }
         )
     }
