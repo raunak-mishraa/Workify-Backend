@@ -21,9 +21,9 @@ const postSchema = new Schema({
         type: String,
         required: true,
     },
-    bookmarkedPost:{
-        type: Schema.Types.ObjectId,
-        ref: 'User',
+    tags:{
+        type: [String],
+        required: true,
     }
 },{timestamps: true});
 

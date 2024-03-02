@@ -18,7 +18,8 @@ const createPost = asyncHandler(async (req, res) => {
         description,
         budget,
         category,
-        client: userId
+        client: userId,
+        tags: req.body.tags.split(',').map((tag)=> tag.trim())
     })
     if(!post){
         throw new ApiError(500, "Post not created")
@@ -42,12 +43,42 @@ const allPost = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, "Posts found",  posts))
 })
 
-const bookmarkedPost = asyncHandler(async (req, res) => {
-    return res.status(200).json(new ApiResponse(200, "Bookmarked posts",  {message: "Bookmarked posts"}))
+// const bookmarkedPost = asyncHandler(async (req, res) => {
+//     const userId = req.user._id;
+//     const postId = req.body.postId;
+    
+//     const user = await User.findById(userId);
+
+//     if (!user) {
+//         return res.status(404).json({ message: "User not found" });
+//     }
+
+//     if (user.bookmarkedPosts.includes(postId)) {
+//         return res.status(400).json({ message: "Post already bookmarked" });
+//     }
+
+//     // Add the postId to the bookmarkedPosts array
+//     user.bookmarkedPosts.push(postId);
+
+//     // Save the updated user document
+//     await user.save();
+
+//     res.status(200).json(
+//         new ApiResponse(200,{bookmarkedPosts: user.bookmarkedPosts}, "Post bookmarked")
+//     );
+// })
+
+const deletePost = asyncHandler(async (req, res) => {
+    const postId = req.params.id;
+    const post = await Post.findByIdAndDelete(postId);
+    if(!post){
+        throw new ApiError(404, "Post not found")
+    }
+    return res.status(200).json(new ApiResponse(200, "Post deleted",  {message: "Post deleted"}))
 })
 export {
     createPost,
     myPost,
     allPost,
-    bookmarkedPost
+    deletePost
 }

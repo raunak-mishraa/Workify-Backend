@@ -80,6 +80,7 @@ const registerUser = asyncHandler(async (req, res) => {
         new ApiResponse(200,createdUser, "User registered successfully")//created an object of ApiResponse and passed the values
     )
 });
+
 const loginUser = asyncHandler(async (req, res) =>{
     const {username, email, password} = req.body;
     if(!username && !email){
@@ -121,6 +122,7 @@ const loginUser = asyncHandler(async (req, res) =>{
         )
     )
 })
+
 const logOutUser = asyncHandler( async(req, res) => {
     await User.findByIdAndUpdate(
         req.user._id, 
@@ -143,6 +145,7 @@ const logOutUser = asyncHandler( async(req, res) => {
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged Out"))
 })
+
 const refreshAccessToken = asyncHandler( async(req, res) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
@@ -229,6 +232,7 @@ const forgotPassword = asyncHandler(async(req, res) => {
         return res.json({message: "Error sending email: " , status:false});
     }
 })
+
 const resetPassword = asyncHandler(async(req, res) => {
     const accessToken = req.params.token;
     console.log(accessToken)
@@ -247,11 +251,34 @@ const resetPassword = asyncHandler(async(req, res) => {
        }
     
 })
+
+const updateUser = asyncHandler(async(req, res) => {
+    const {username, fullName, email, password} = req.body;
+    const user = await User.findById(req.user._id);
+    if(!user){
+        throw new ApiError(404, "User not found")
+    }
+    if(username){
+        user.username = username;
+    }
+    if(fullName){
+        user.fullName = fullName;
+    }
+    if(email){
+        user.email = email;
+    }
+    if(password){
+        user.password = password;
+    }
+    await user.save();
+    return res.status(200).json({message: "User updated successfully"})
+})
 export {
     registerUser,
     loginUser,
     logOutUser,
     refreshAccessToken,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    updateUser
 }

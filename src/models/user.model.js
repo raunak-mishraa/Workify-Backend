@@ -39,9 +39,9 @@ const userSchema = new Schema(
             default: false
         },
         profession:{
-            type: String,
-            required: true
+            type: String
         },
+        // bookmarkedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }]
     }
     ,{timestamps:true})
 
