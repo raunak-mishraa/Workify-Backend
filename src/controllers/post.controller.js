@@ -76,9 +76,42 @@ const deletePost = asyncHandler(async (req, res) => {
     }
     return res.status(200).json(new ApiResponse(200, "Post deleted",  {message: "Post deleted"}))
 })
+
+const searchPosts = asyncHandler(async (req, res) => {
+    const query = req.query.query;
+    const clientPosts = await Post.find({ 
+        $or: [
+            { title: { $regex: query, $options: 'i' } },
+            { tags: { $regex: query, $options: 'i' } }
+        ]}
+        ).populate('client');
+        if(clientPosts.length === 0){
+            return res.status(404).json(new ApiResponse(404, "No posts found", []));
+        }
+    return res.status(200).json(new ApiResponse(200, "Posts found",  clientPosts))
+})
+const searchFreelancers = asyncHandler(async (req, res) => {
+    const query = req.query.query;
+    const freelancers = await User.find({
+        isClient: false,
+        $or: [
+            {profession: { $regex: query, $options: 'i' }},
+            {fullName: { $regex: query, $options: 'i' }},
+        ]
+    });
+    
+    if(freelancers.length === 0){
+        return res.status(404).json(new ApiResponse(200, "No freelancers found", []));
+    }
+    
+    return res.status(200).json(new ApiResponse(200, "Freelancers found", freelancers));
+});
+
 export {
     createPost,
     myPost,
     allPost,
-    deletePost
+    deletePost,
+    searchPosts,
+    searchFreelancers
 }

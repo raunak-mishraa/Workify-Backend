@@ -273,6 +273,57 @@ const updateUser = asyncHandler(async(req, res) => {
     await user.save();
     return res.status(200).json({message: "User updated successfully"})
 })
+
+const updateUserProfile = asyncHandler(async(req, res) => {
+    const {fullName, email, profession} = req.body;
+    // if(!fullName || !email || !profession){
+    //         throw new ApiError(400, "At least one field is required")
+    // }
+    if(fullName.trim() === "" || email.trim() === "" || profession.trim() === ""){
+        throw new ApiError(400, "At least one field is required")
+    }
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+       { 
+        $set: {
+            fullName,
+            email,
+            profession
+        },
+       },
+        {new: true}
+    ).select("-password")
+    return res
+    .status(200)
+    .json(new ApiResponse(200,  "User profile updated successfully", user))
+})
+
+
+const updateUserAvatar = asyncHandler(async(req, res) => {
+    const avatarLocalPath = req.file?.path;
+    if(!avatarLocalPath){
+        throw new ApiError(400, "avatar is required")
+    }
+    const avatar = await uploadOnCloudinary(avatarLocalPath)
+    if(!avatar.url){
+        throw new ApiError(400, "error while uploading avatar")
+    }
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                avatar: avatar.url
+            }
+        },
+        {
+            new: true
+        }
+    ).select("-password")
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200,  "User avatar updated successfully",user))
+})
 export {
     registerUser,
     loginUser,
@@ -280,5 +331,7 @@ export {
     refreshAccessToken,
     forgotPassword,
     resetPassword,
-    updateUser
+    updateUser,
+    updateUserProfile,
+    updateUserAvatar
 }
