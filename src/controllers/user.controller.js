@@ -324,6 +324,22 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
     .status(200)
     .json(new ApiResponse(200,  "User avatar updated successfully",user))
 })
+
+const deleteUser = asyncHandler(async(req, res) => {
+    const userId = req.user._id;
+    const password = req.body.password;
+    console.log(password)
+    const user = await User.findById(userId);
+    const isPasswordCorrect = await user.isCorrectPassword(password);
+    console.log(isPasswordCorrect)
+    if(!isPasswordCorrect){
+        throw new ApiError(401, "Invalid password")
+    }
+    await User.findByIdAndDelete(userId);
+    return res
+    .status(200)
+    .json(new ApiResponse(200, "User deleted successfully"))
+})
 export {
     registerUser,
     loginUser,
@@ -333,5 +349,6 @@ export {
     resetPassword,
     updateUser,
     updateUserProfile,
-    updateUserAvatar
+    updateUserAvatar,
+    deleteUser
 }
