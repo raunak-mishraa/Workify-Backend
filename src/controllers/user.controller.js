@@ -103,15 +103,26 @@ const loginUser = asyncHandler(async (req, res) =>{
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id);
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-    const options = {
+    const accessTokenExpiry = jwt.decode(accessToken).exp;
+    const refreshTokenExpiry = jwt.decode(refreshToken).exp;
+    console.log(accessTokenExpiry, refreshTokenExpiry)
+
+    const optionsAccess = {
         httpOnly: true,
-        secure: true
+        secure: true,
+        expires: new Date(accessTokenExpiry * 1000)
+    };
+    
+    const optionsRefresh = {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(refreshTokenExpiry * 1000)
     }
 
     return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, optionsAccess)
+    .cookie("refreshToken", refreshToken, optionsRefresh)
     .json(
         new ApiResponse(
             200,

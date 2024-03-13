@@ -19,8 +19,10 @@ import userRouter from './routes/user.routes.js';
 import postRouter from './routes/post.routes.js';
 import applicationRouter from './routes/application.routes.js';
 import searchRouter from './routes/search.routes.js'
+import gigRouter from './routes/gig.routes.js'
 app.use("/api/v1/users", userRouter)
 app.use('/api/v1/posts', postRouter)
 app.use('/api/v1/applications', applicationRouter)
 app.use('/api/v1/search', searchRouter)
+app.use('/api/v1/gigs', gigRouter)
 export { app }

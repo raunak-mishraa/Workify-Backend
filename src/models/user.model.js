@@ -38,10 +38,15 @@ const userSchema = new Schema(
             required: true,
             default: false
         },
+        // isFreelancer:{
+        //     type: Boolean,
+        //     required: true,
+        //     default: false
+        // },
         profession:{
             type: String
         },
-        // bookmarkedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }]
+        bookmarkedPosts: [{ type: Schema.Types.ObjectId, ref: "Post" }]
     }
     ,{timestamps:true})
 
@@ -63,12 +68,14 @@ const userSchema = new Schema(
             {
                 _id: this._id,
                 username: this.username,
+                isClient: this.isClient,
                 email: this.email,
                 fullName: this.fullName,
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
                 expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+                // expiresIn:"1m"
             }
         )
     }
