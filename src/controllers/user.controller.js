@@ -6,6 +6,7 @@ import { ApiResponse } from '../utils/ApiResponse.js'
 import nodemailer from 'nodemailer'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+import mongoose from 'mongoose'
 const generateAccessAndRefreshTokens = async(userId) => {
     try {
         const user = await User.findById(userId);
@@ -309,7 +310,6 @@ const updateUserProfile = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200,  "User profile updated successfully", user))
 })
 
-
 const updateUserAvatar = asyncHandler(async(req, res) => {
     const avatarLocalPath = req.file?.path;
     if(!avatarLocalPath){
@@ -351,6 +351,44 @@ const deleteUser = asyncHandler(async(req, res) => {
     .status(200)
     .json(new ApiResponse(200, "User deleted successfully"))
 })
+
+const getUser = asyncHandler(async(req, res) => {
+    const param = req.params.id;
+
+    if (!param) {
+        return res.status(400).json({ error: 'User ID is missing' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(param)) {
+        return res.status(400).json({ error: 'Invalid User ID' });
+    }
+
+    const user = await User.findById(param);
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    return res.status(200).json(user);
+})
+
+const updateCountry = asyncHandler(async(req, res) => {
+    const userId = req.user._id;
+    const country =  req.body.country;
+    console.log(country)
+    let user = await User.findByIdAndUpdate(userId, {
+            $set: {
+                country
+            }
+        },
+        {
+            new: true
+        });
+    
+    if(!user){
+        return res.status(200).json({message:"Error"})
+    }
+    return res.status(200).json({data:user})
+})
 export {
     registerUser,
     loginUser,
@@ -361,5 +399,7 @@ export {
     updateUser,
     updateUserProfile,
     updateUserAvatar,
-    deleteUser
+    deleteUser,
+    getUser,
+    updateCountry
 }

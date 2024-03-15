@@ -38,6 +38,11 @@ const userSchema = new Schema(
             required: true,
             default: false
         },
+        country: {
+            type: String,
+            required: false,
+            default: "India"
+        },
         // isFreelancer:{
         //     type: Boolean,
         //     required: true,

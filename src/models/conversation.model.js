@@ -18,7 +18,7 @@ const conversationSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    readBtClient: {
+    readByClient: {
         type: Boolean,
         default: false,
     },  
