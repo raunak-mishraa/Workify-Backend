@@ -83,57 +83,56 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) =>{
-    return res.status(200).json({message:"is it working"})
-    // const {username, email, password} = req.body;
-    // if(!username && !email){
-    //     throw new ApiError(400, "username or email is required")
-    // }
+    const {username, email, password} = req.body;
+    if(!username && !email){
+        throw new ApiError(400, "username or email is required")
+    }
 
-    // const user = await User.findOne({
-    //     $or: [{username}, {email}]
-    // })
-    // if(!user){
-    //     throw new ApiError(404, "User does not exist!")
-    // }
+    const user = await User.findOne({
+        $or: [{username}, {email}]
+    })
+    if(!user){
+        throw new ApiError(404, "User does not exist!")
+    }
 
-    // const isPasswordValid = await user.isCorrectPassword(password)
+    const isPasswordValid = await user.isCorrectPassword(password)
 
-    // if(!isPasswordValid){
-    //     throw new ApiError(404, "Invalid user credentials")
-    // }
+    if(!isPasswordValid){
+        throw new ApiError(404, "Invalid user credentials")
+    }
 
-    // const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id);
-    // const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
+    const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id);
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-    // const accessTokenExpiry = jwt.decode(accessToken).exp;
-    // const refreshTokenExpiry = jwt.decode(refreshToken).exp;
-    // console.log(accessTokenExpiry, refreshTokenExpiry)
+    const accessTokenExpiry = jwt.decode(accessToken).exp;
+    const refreshTokenExpiry = jwt.decode(refreshToken).exp;
+    console.log(accessTokenExpiry, refreshTokenExpiry)
 
-    // const optionsAccess = {
-    //     httpOnly: true,
-    //     secure: true,
-    //     expires: new Date(accessTokenExpiry * 1000)
-    // };
+    const optionsAccess = {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(accessTokenExpiry * 1000)
+    };
     
-    // const optionsRefresh = {
-    //     httpOnly: true,
-    //     secure: true,
-    //     expires: new Date(refreshTokenExpiry * 1000)
-    // }
+    const optionsRefresh = {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(refreshTokenExpiry * 1000)
+    }
 
-    // return res
-    // .status(200)
-    // .cookie("accessToken", accessToken, optionsAccess)
-    // .cookie("refreshToken", refreshToken, optionsRefresh)
-    // .json(
-    //     new ApiResponse(
-    //         200,
-    //         {
-    //             user: loggedInUser, accessToken, refreshToken
-    //         },
-    //         "User logged In Successfully"
-    //     )
-    // )
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, optionsAccess)
+    .cookie("refreshToken", refreshToken, optionsRefresh)
+    .json(
+        new ApiResponse(
+            200,
+            {
+                user: loggedInUser, accessToken, refreshToken
+            },
+            "User logged In Successfully"
+        )
+    )
 })
 
 const logOutUser = asyncHandler( async(req, res) => {
