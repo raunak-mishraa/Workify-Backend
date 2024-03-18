@@ -389,6 +389,53 @@ const updateCountry = asyncHandler(async(req, res) => {
     }
     return res.status(200).json({data:user})
 })
+
+const addSkill = asyncHandler(async(req, res) => {
+   const {skills} = req.body;
+
+    if (!Array.isArray(skills) || skills.length === 0) {
+        return res.status(400).json(new ApiResponse(400, "Skills must be provided as an array."));
+        }
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $addToSet: { skills: { $each: skills } } }, // Using $addToSet to avoid duplicate skills
+        { new: true }
+    );
+
+    if (!updatedUser) {
+        return res.status(404).json(new ApiResponse(404, "User not found."));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Skills added successfully", updatedUser.skills));
+    // await User.findByIdAndUpdate(req.user._id, {
+    //     $push: {
+    //         skills
+    //     }
+    // },
+    // {
+    //     new: true
+    // })
+    
+})
+
+const deleteSkill = asyncHandler(async(req, res)=>{
+    const {skill} = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { $pull: { skills: skill } },
+        { new: true }
+    );
+
+    if (!updatedUser) {
+        return res.status(404).json(new ApiResponse(404, "User not found."));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Skill deleted successfully", updatedUser.skills));
+})
+const getSkill = asyncHandler(async(req, res)=>{
+    // const userId = req.user._id;
+    // const user = await User.find(userId, )
+})
 export {
     registerUser,
     loginUser,
@@ -401,5 +448,8 @@ export {
     updateUserAvatar,
     deleteUser,
     getUser,
-    updateCountry
+    updateCountry,
+    addSkill,
+    deleteSkill,
+    getSkill
 }

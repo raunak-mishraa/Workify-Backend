@@ -43,6 +43,18 @@ const userSchema = new Schema(
             required: false,
             default: "India"
         },
+        skills:{
+            type: [String],
+            required: true,
+        },
+        projects: {
+            type: Schema.Types.ObjectId,
+            ref:'Project'
+        },
+        skills:{
+            type: [String],
+            required: true,
+        },
         // isFreelancer:{
         //     type: Boolean,
         //     required: true,
