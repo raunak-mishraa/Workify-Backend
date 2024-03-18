@@ -390,6 +390,7 @@ const updateCountry = asyncHandler(async(req, res) => {
     return res.status(200).json({data:user})
 })
 
+
 const addSkill = asyncHandler(async(req, res) => {
    const {skills} = req.body;
 
