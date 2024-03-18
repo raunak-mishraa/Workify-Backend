@@ -454,3 +454,6 @@ export {
     deleteSkill,
     getSkill
 }
+
+
+  // "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
