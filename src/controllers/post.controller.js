@@ -107,11 +107,45 @@ const searchFreelancers = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, "Freelancers found", freelancers));
 });
 
+const toggleBookmark = asyncHandler(async(req, res) => {
+    const postId = req.body.postId;
+    const userId = req.user._id;
+    console.log(postId, userId)
+     // Check if post is already bookmarked by the user
+     const user = await User.findById(userId);
+     const index = user.bookmarkedPosts.indexOf(postId);
+    
+     if (index === -1) {
+        // Post not bookmarked, add it to bookmarks
+        user.bookmarkedPosts.push(postId);
+    } else {
+        // Post already bookmarked, remove it from bookmarks
+        user.bookmarkedPosts.splice(index, 1);
+    }
+
+    // Save the updated user object
+    await user.save();
+    // const bookmarkedPostData = await User.findById(userId).populate("bookmarkedPosts")
+    // console.log(bookmarkedPostData)
+    return res.status(200).json(new ApiResponse(200, "Bookmark updated successfully", user));
+})
+
+const getBookmarkedPosts = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    // console.log("get",userId)
+    const bookmarkedPostData = await User.findById(userId).populate("bookmarkedPosts")
+    // console.log(bookmarkedPostData.bookmarkedPosts)
+    return res
+    .status(200)
+    .json(new ApiResponse(200, "Bookmarked post fetched successfully", bookmarkedPostData.bookmarkedPosts))
+})
 export {
     createPost,
     myPost,
     allPost,
     deletePost,
     searchPosts,
-    searchFreelancers
+    searchFreelancers,
+    toggleBookmark,
+    getBookmarkedPosts
 }

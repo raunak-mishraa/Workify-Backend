@@ -392,38 +392,35 @@ const updateCountry = asyncHandler(async(req, res) => {
 
 
 const addSkill = asyncHandler(async(req, res) => {
-   const {skills} = req.body;
-
+    const { skills } = req.body;
+    // console.log(skills)
     if (!Array.isArray(skills) || skills.length === 0) {
         return res.status(400).json(new ApiResponse(400, "Skills must be provided as an array."));
-        }
+    }
+    
+    // Split the single string into multiple strings
+    const updatedSkills = skills[0].split(',').map(skill => skill.trim());
+    
     const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
-        { $addToSet: { skills: { $each: skills } } }, // Using $addToSet to avoid duplicate skills
+        { $addToSet: { skills: { $each: updatedSkills } } }, // Using $addToSet to avoid duplicate skills
         { new: true }
     );
-
+    
     if (!updatedUser) {
         return res.status(404).json(new ApiResponse(404, "User not found."));
     }
-
-    return res.status(200).json(new ApiResponse(200, "Skills added successfully", updatedUser.skills));
-    // await User.findByIdAndUpdate(req.user._id, {
-    //     $push: {
-    //         skills
-    //     }
-    // },
-    // {
-    //     new: true
-    // })
+    
+    return res.status(200).json(new ApiResponse(200, "Skills added successfully", updatedUser));
     
 })
 
 const deleteSkill = asyncHandler(async(req, res)=>{
-    const {skill} = req.body;
+    const {skillValue} = req.body;
+    // console.log(req.user._id, skillValue)
     const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
-        { $pull: { skills: skill } },
+        { $pull: { skills: skillValue } },
         { new: true }
     );
 
@@ -433,10 +430,16 @@ const deleteSkill = asyncHandler(async(req, res)=>{
 
     return res.status(200).json(new ApiResponse(200, "Skill deleted successfully", updatedUser.skills));
 })
-const getSkill = asyncHandler(async(req, res)=>{
-    // const userId = req.user._id;
-    // const user = await User.find(userId, )
+
+const userSkills = asyncHandler(async(req, res) => {
+    const userSkill = await User.findById(req.user._id)
+    if(!userSkill.skills){
+        return res.status(404).json({message: "user skill not found"})
+    }
+    return res.status(200).json(userSkill.skills)
 })
+
+
 export {
     registerUser,
     loginUser,
@@ -452,7 +455,8 @@ export {
     updateCountry,
     addSkill,
     deleteSkill,
-    getSkill
+    userSkills,
+
 }
 
 
