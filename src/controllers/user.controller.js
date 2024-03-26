@@ -111,13 +111,15 @@ const loginUser = asyncHandler(async (req, res) =>{
     const optionsAccess = {
         httpOnly: true,
         secure: true,
-        expires: new Date(accessTokenExpiry * 1000)
+        expires: new Date(accessTokenExpiry * 1000),
+        sameSite: 'None' 
     };
     
     const optionsRefresh = {
         httpOnly: true,
         secure: true,
-        expires: new Date(refreshTokenExpiry * 1000)
+        expires: new Date(refreshTokenExpiry * 1000),
+        sameSite: 'None' 
     }
 
     return res
