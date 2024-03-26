@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
-dotenv.config();
+// dotenv.config();
 
 import ConnectDB from "./db/index.js";
 import {app} from "./app.js";
 
-// dotenv.config({
-//     path: './.env'
-// });
+dotenv.config({
+    path: './.env'
+});
 console.log(process.env.MONGODB_URI);
 console.log(process.env.PORT);
 ConnectDB()
