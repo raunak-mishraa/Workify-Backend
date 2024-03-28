@@ -133,11 +133,23 @@ const toggleBookmark = asyncHandler(async(req, res) => {
 const getBookmarkedPosts = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     // console.log("get",userId)
-    const bookmarkedPostData = await User.findById(userId).populate("bookmarkedPosts")
-
+    // const bookmarkedPostData = await User.findById(userId).populate("bookmarkedPosts")
+    const userData = await User.findById(userId).populate({
+        path: 'bookmarkedPosts',
+        populate: {
+            path: 'client', // Populate the 'client' field in the Post model
+            select: 'fullName email avatar', // Select fields you want to retrieve for the client
+        },
+    });
+    const bookmarkedPosts = userData.bookmarkedPosts;
+    // return res.status(200).json({
+    //     success: true,
+    //     message: "Bookmarked posts fetched successfully",
+    //     bookmarkedPosts,
+    // });
     return res
     .status(200)
-    .json(new ApiResponse(200, "Bookmarked post fetched successfully", bookmarkedPostData.bookmarkedPosts))
+    .json(new ApiResponse(200, "Bookmarked post fetched successfully",  bookmarkedPosts))
 })
 export {
     createPost,
