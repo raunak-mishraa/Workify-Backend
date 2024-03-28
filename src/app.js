@@ -5,7 +5,7 @@ import cors from 'cors';
 const app = express();
 
 //configure
-console.log(process.env.CLIENT_URL)
+// console.log(process.env.CLIENT_URL)
 app.use(cors({
     origin: process.env.CLIENT_URL,
     credentials: true

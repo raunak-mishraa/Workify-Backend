@@ -134,7 +134,7 @@ const getBookmarkedPosts = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     // console.log("get",userId)
     const bookmarkedPostData = await User.findById(userId).populate("bookmarkedPosts")
-    // console.log(bookmarkedPostData.bookmarkedPosts)
+
     return res
     .status(200)
     .json(new ApiResponse(200, "Bookmarked post fetched successfully", bookmarkedPostData.bookmarkedPosts))

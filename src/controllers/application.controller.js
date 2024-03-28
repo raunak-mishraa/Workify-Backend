@@ -45,7 +45,7 @@ const getApplications = asyncHandler(async (req, res) => {
 })
 const myApplications = asyncHandler(async (req, res) => {
     const userId = req.user._id;
-    const applications = await Application.find({userId}).populate('postId');
+    const applications = await Application.find({ userId }).populate('postId').sort({ _id: -1 });
     if(!applications){
         return res.status(404).json(
             new ApiError(404, 'No applications found')

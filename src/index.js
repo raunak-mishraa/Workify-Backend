@@ -6,8 +6,8 @@ import {app} from "./app.js";
 dotenv.config({
     path: './.env'
 });
-console.log(process.env.CLIENT_URL);
-console.log(process.env.PORT);
+// console.log(process.env.CLIENT_URL);
+// console.log(process.env.PORT);
 ConnectDB()
 .then(() =>{
     app.listen(process.env.PORT || 8000, () => {
