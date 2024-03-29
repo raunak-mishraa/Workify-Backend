@@ -32,7 +32,7 @@ app.use('/api/v1/search', searchRouter)
 app.use('/api/v1/gigs', gigRouter)
 app.use('/api/v1/reviews', reviewRouter)
 app.use('/api/v1/orders', orderRouter)
-app.use('/api/v1/conversation', conversationRouter)
+app.use('/api/v1/conversations', conversationRouter)
 app.use('/api/v1/project', projectRouter)
 
 export { app }
