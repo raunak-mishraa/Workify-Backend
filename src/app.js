@@ -25,6 +25,7 @@ import reviewRouter from './routes/review.routes.js'
 import orderRouter from './routes/order.routes.js'
 import conversationRouter from './routes/coversation.routes.js'
 import projectRouter from './routes/project.routes.js'
+import messageRouter from './routes/message.routes.js'
 app.use("/api/v1/users", userRouter)
 app.use('/api/v1/posts', postRouter)
 app.use('/api/v1/applications', applicationRouter)
@@ -34,5 +35,6 @@ app.use('/api/v1/reviews', reviewRouter)
 app.use('/api/v1/orders', orderRouter)
 app.use('/api/v1/conversations', conversationRouter)
 app.use('/api/v1/project', projectRouter)
+app.use('/api/v1/messages', messageRouter)
 
 export { app }

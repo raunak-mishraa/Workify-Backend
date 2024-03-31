@@ -38,7 +38,7 @@ const getApplications = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const posts = await Post.find({client: userId})
     const postIds = posts.map(post => post._id);
-    const applications = await Application.find({ postId: { $in: postIds }}).populate('postId').populate('userId', '-password -refreshToken -isClient -createdAt -updatedAt');
+    const applications = await Application.find({ postId: { $in: postIds }}).populate('postId').populate('userId', '-password -refreshToken -isClient -createdAt -updatedAt').sort({ _id: -1 });
     return res.status(200).json(
         new ApiResponse(200, 'Applications fetched successfully', applications)
     )
