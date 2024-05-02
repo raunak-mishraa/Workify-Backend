@@ -1,15 +1,46 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Gig } from "../models/gig.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const createGig = asyncHandler(async (req, res) => {
     if(req.user.isClient) return res.status(403).json({message:"Only freelancers can create gigs"})
+    console.log(req.files)
 
+    const coverImgLocalPath = req.files?.coverImage[0]?.path;
+    if(!coverImgLocalPath) {
+        return res.status(400).json({message:"Please upload a cover image"});
+    }
+    
+    const coverImage = await uploadOnCloudinary(coverImgLocalPath)
+    
+    if (!coverImage) {
+        throw new ApiError(400, "cover image is required")
+    }
+
+    const imagesLocalPath = req.files?.images[0]?.path;
+    const images = await uploadOnCloudinary(imagesLocalPath)
+    if (!images) {
+        throw new ApiError(400, "images are required")
+    }
+    // const images = req.files?.images?.map(image => image.path)
     const newGig = await Gig.create({
         userId: req.user._id,
-        ...req.body
+        title: req.body.title,
+        desc: req.body.description,
+        category: req.body.category,
+        price: req.body.price,
+        cover: coverImage.url,
+        images: images.url,
+        shortTitle: req.body.serviceTitle,
+        shortDesc: req.body.shortDescription,
+        deliveryTime: req.body.deliveryTime,
+        revisionNumber: req.body.revisionNumber,
+        features: JSON.parse(req.body.features)
+        // ...req.body
     })
-    console.log(req.user.isClient)
-    // const savedGig = await newGig.save()
+    // console.log(req.user.isClient, coverImage)
+    console.log(newGig)
     return res.status(201).json(newGig)
+    // return res.status(201).json({message:"Gig created successfully"})
 });
 
 const deleteGig = asyncHandler(async (req, res) => {
