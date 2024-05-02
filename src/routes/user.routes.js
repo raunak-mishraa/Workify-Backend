@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { loginUser, registerUser, logOutUser, refreshAccessToken, forgotPassword, resetPassword, updateUser, updateUserProfile, updateUserAvatar, deleteUser, getUser, updateCountry, addSkill, deleteSkill, userSkills } from "../controllers/user.controller.js"
+import { loginUser, registerUser, logOutUser, refreshAccessToken, forgotPassword, resetPassword, updateUser, updateUserProfile, updateUserAvatar, deleteUser, getUser, updateCountry, addSkill, deleteSkill, userSkills, verifyUser } from "../controllers/user.controller.js"
 import { upload } from '../middlewares/multer.middleware.js'
 import { verifyJWT } from "../middlewares/auth.middleware.js"
 const router = Router()
@@ -22,6 +22,7 @@ router.route("/update-avatar").put(verifyJWT, upload.single("avatar"), updateUse
 router.route("/update-country").put(verifyJWT, updateCountry)
 router.route("/add-skill").post(verifyJWT, addSkill)
 router.route("/delete-skill").delete(verifyJWT, deleteSkill)
+router.route("/verify").put(verifyJWT, verifyUser)
 
 
 

@@ -365,8 +365,8 @@ const getUser = asyncHandler(async(req, res) => {
         return res.status(400).json({ error: 'Invalid User ID' });
     }
 
-    const user = await User.findById(param);
-
+    const user = await User.findById(param).select('-password -refreshToken');
+    console.log(user)
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
     }
@@ -441,6 +441,25 @@ const userSkills = asyncHandler(async(req, res) => {
     return res.status(200).json(userSkill.skills)
 })
 
+const verifyUser = asyncHandler(async(req, res) => {
+    // console.log(req.user._id, req.body.isVerified)
+    const userId = req.user._id;
+    const user = await User.findByIdAndUpdate(userId, {
+        $set: {
+            isVerified: req.body.isVerified
+        }
+        },
+        {
+            new: true
+        }
+    )
+    if(!user){
+        return res.status(400).json({message: "Error"})
+    }
+    return res
+    .status(200)
+    .json(user)
+})
 
 export {
     registerUser,
@@ -458,7 +477,7 @@ export {
     addSkill,
     deleteSkill,
     userSkills,
-
+    verifyUser
 }
 
 

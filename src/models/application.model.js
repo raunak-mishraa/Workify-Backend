@@ -17,6 +17,10 @@ const applicationSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    isCompleted: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 export const Application = mongoose.model("Application", applicationSchema);

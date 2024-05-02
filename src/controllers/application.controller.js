@@ -59,21 +59,41 @@ const deleteApplication = asyncHandler(async (req, res) => {
     const applicationId = req.params.id;
     const userId = req.user._id;
     console.log(applicationId, userId);
-    const application = await Application.findByIdAndDelete(applicationId, userId);
+    const application = await Application.findByIdAndDelete(applicationId);
     if(!application){
         return res.status(404).json(
-            new ApiError(404, 'Application not found',"You are not authorized to delete this application")
+            new ApiError(404, "You are not authorized to delete this application")
         )
     }
     return res.status(200).json(
         new ApiResponse(200, 'Application deleted successfully')
     )
 })
+
+const updateApplication = asyncHandler(async (req, res) => {
+    const applicationId = req.params.id;
+    console.log(applicationId);
+    const userId = req.user._id;
+    const { isCompleted } = req.body;
+    console.log(isCompleted);
+    const application = await Application.findByIdAndUpdate(applicationId, { isCompleted }, { new: true });
+    if(!application){
+        return res
+        .status(404)
+        .json(
+            new ApiError(404, "Application not found")
+        )
+    }
+    return res.status(200).json(
+        new ApiResponse(200, 'Application updated successfully', application)
+    )
+});
 export { 
     createApplication,
     getApplications,
     myApplications,
-    deleteApplication
+    deleteApplication,
+    updateApplication
  };
 
 //  .populate('userId' , '-password -refreshToken -isClient -createdAt -updatedAt');
