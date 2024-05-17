@@ -47,7 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if(existedUser){
         throw new ApiError(409, "Username or email already taken")
     }
-    console.log("image",req.files)
+    // console.log("image",req.files)
 
     const avatarLocalPath = req.files?.avatar[0]?.path;//the access of files is possible because of the multer middleware
 
