@@ -48,12 +48,6 @@ const userSchema = new Schema(
             required: true,
         },
         projects: [{ type: Schema.Types.ObjectId, ref: "Project" }],
-      
-        // isFreelancer:{
-        //     type: Boolean,
-        //     required: true,
-        //     default: false
-        // },
         profession:{
             type: String
         },

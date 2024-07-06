@@ -25,12 +25,10 @@ const getConversations = asyncHandler(async (req, res) => {
 })
 
 const getSingleConversation = asyncHandler(async(req, res)=>{
-  const conversation = await Conversation.findOne({ id: req.params.id });
+  const conversation = await Conversation.findOne({ id: req.params.id }).populate("clientId freelancerId");
   if (!conversation) return res.status(404).json(new ApiError(404, "Not found!"));
   console.log(conversation)
   res.status(200).send(conversation);
-    // // if (!conversation) return next(new ApiError(404, "Not found!"));
-    // // res.status(200).send(conversation);
 })
 const updateConversation = asyncHandler(async(req, res)=>{
     const updatedConversation = await Conversation.findOneAndUpdate(

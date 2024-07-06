@@ -111,45 +111,44 @@ const toggleBookmark = asyncHandler(async(req, res) => {
     const postId = req.body.postId;
     const userId = req.user._id;
     console.log(postId, userId)
-     // Check if post is already bookmarked by the user
+
      const user = await User.findById(userId);
      const index = user.bookmarkedPosts.indexOf(postId);
     
      if (index === -1) {
-        // Post not bookmarked, add it to bookmarks
         user.bookmarkedPosts.push(postId);
     } else {
-        // Post already bookmarked, remove it from bookmarks
         user.bookmarkedPosts.splice(index, 1);
     }
 
-    // Save the updated user object
     await user.save();
-    // const bookmarkedPostData = await User.findById(userId).populate("bookmarkedPosts")
-    // console.log(bookmarkedPostData)
+
     return res.status(200).json(new ApiResponse(200, "Bookmark updated successfully", user));
 })
 
 const getBookmarkedPosts = asyncHandler(async (req, res) => {
     const userId = req.user._id;
-    // console.log("get",userId)
-    // const bookmarkedPostData = await User.findById(userId).populate("bookmarkedPosts")
     const userData = await User.findById(userId).populate({
         path: 'bookmarkedPosts',
         populate: {
-            path: 'client', // Populate the 'client' field in the Post model
-            select: 'fullName email avatar', // Select fields you want to retrieve for the client
+            path: 'client',
+            select: 'fullName email avatar', 
         },
     });
-    const bookmarkedPosts = userData.bookmarkedPosts;
-    // return res.status(200).json({
-    //     success: true,
-    //     message: "Bookmarked posts fetched successfully",
-    //     bookmarkedPosts,
-    // });
+    const bookmarkedPosts = userData.bookmarkedPosts.reverse();
     return res
     .status(200)
     .json(new ApiResponse(200, "Bookmarked post fetched successfully",  bookmarkedPosts))
+})
+
+const getSinglePost = asyncHandler(async (req, res) => {
+    const postId = req.params.postId;
+    // console.log(postId)
+    const post = await Post.findById(postId).populate('client');
+    if(!post){
+        throw new ApiError(404, "Post not found")
+    }
+    return res.status(200).json(new ApiResponse(200, "Post found",  post))
 })
 export {
     createPost,
@@ -159,5 +158,6 @@ export {
     searchPosts,
     searchFreelancers,
     toggleBookmark,
-    getBookmarkedPosts
+    getBookmarkedPosts,
+    getSinglePost
 }

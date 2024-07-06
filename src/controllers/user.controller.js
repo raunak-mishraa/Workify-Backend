@@ -32,6 +32,7 @@ const registerUser = asyncHandler(async (req, res) => {
     //remove password and refresh token from the response
     //check for user creation
     //return response
+    console.log(req.body)
     const {username, fullName, email, password} = req.body;
 
     if(
@@ -137,7 +138,8 @@ const loginUser = asyncHandler(async (req, res) =>{
     )
 })
 
-const logOutUser = asyncHandler( async(req, res) => {
+const logOutUser = asyncHandler(async(req, res) => {
+console.log(req.user._id)
     await User.findByIdAndUpdate(
         req.user._id, 
         {
@@ -289,11 +291,11 @@ const updateUser = asyncHandler(async(req, res) => {
 })
 
 const updateUserProfile = asyncHandler(async(req, res) => {
-    const {fullName, email, profession} = req.body;
+    const {fullName, profession} = req.body;
     // if(!fullName || !email || !profession){
     //         throw new ApiError(400, "At least one field is required")
     // }
-    if(fullName.trim() === "" || email.trim() === "" || profession.trim() === ""){
+    if(fullName.trim() === "" || profession.trim() === ""){
         throw new ApiError(400, "At least one field is required")
     }
     const user = await User.findByIdAndUpdate(
@@ -301,7 +303,6 @@ const updateUserProfile = asyncHandler(async(req, res) => {
        { 
         $set: {
             fullName,
-            email,
             profession
         },
        },
@@ -354,23 +355,18 @@ const deleteUser = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, "User deleted successfully"))
 })
 
+
 const getUser = asyncHandler(async(req, res) => {
-    const param = req.params.id;
-
-    if (!param) {
-        return res.status(400).json({ error: 'User ID is missing' });
+    const userId = req.user._id;
+    const user = await User.findById(userId).select("-password -refreshToken")
+    if(!user){
+        return res.status(404).json(
+            new ApiResponse(404, "User not found")
+        )
     }
-
-    if (!mongoose.Types.ObjectId.isValid(param)) {
-        return res.status(400).json({ error: 'Invalid User ID' });
-    }
-
-    const user = await User.findById(param).select('-password -refreshToken');
-    console.log(user)
-    if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-    }
-    return res.status(200).json(user);
+    return res.status(200).json(
+        new ApiResponse(200, "User found successfully", user)
+    )
 })
 
 const updateCountry = asyncHandler(async(req, res) => {
@@ -461,10 +457,33 @@ const verifyUser = asyncHandler(async(req, res) => {
     .json(user)
 })
 
+const getClientProfile = asyncHandler(async(req, res) => {
+    const param = req.params.id;
+
+    if (!param) {
+        return res.status(400).json({ error: 'User ID is missing' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(param)) {
+        return res.status(400).json({ error: 'Invalid User ID' });
+    }
+
+    const user = await User.findById(param).populate('projects').select('-password -refreshToken');
+    console.log(user)
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    return res.status(200).json(user);
+})
+
+//testing
+// const loggedOut = asyncHandler(async(req, res) => {
+//     return res.status(200).json({message: "User logged out"})
+// })
+
 export {
     registerUser,
     loginUser,
-    logOutUser,
     refreshAccessToken,
     forgotPassword,
     resetPassword,
@@ -477,7 +496,9 @@ export {
     addSkill,
     deleteSkill,
     userSkills,
-    verifyUser
+    getClientProfile,
+    verifyUser,
+    logOutUser
 }
 
 

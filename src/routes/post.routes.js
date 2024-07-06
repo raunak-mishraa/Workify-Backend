@@ -1,8 +1,9 @@
 import { Router } from "express"
-import { createPost, myPost, allPost, deletePost, toggleBookmark, getBookmarkedPosts } from "../controllers/post.controller.js"
+import { createPost, myPost, allPost, deletePost, toggleBookmark, getBookmarkedPosts, getSinglePost } from "../controllers/post.controller.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js"
 const router = Router()
 router.route("/createpost").post(verifyJWT, createPost)
+router.route("/get-single-post/:postId").get(verifyJWT, getSinglePost)
 router.route("/mypost").get(verifyJWT, myPost)
 router.route("/allposts").get(allPost)
 router.route("/deletepost/:id").delete(deletePost)

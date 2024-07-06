@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Project } from '../models/project.model.js'
 import {ApiResponse} from '../utils/ApiResponse.js'
 import { ApiError } from "../utils/ApiError.js";
+import { User } from "../models/user.model.js";
 
 const createProject = asyncHandler(async(req, res) => {
     const project = await Project.create({
@@ -14,6 +15,19 @@ const createProject = asyncHandler(async(req, res) => {
         .status(400)
         .json(new ApiError(404, 'Error while creating project'))
     }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        { $push: { projects: project._id } },
+        { new: true } // Return the updated document
+    );
+
+    if (!user) {
+        return res
+        .status(400)
+        .json(new ApiError(404, 'Error while updating user projects'));
+    }
+
     return res
     .status(201)
     .json(new ApiResponse(200,'Project created successfully', project))

@@ -88,12 +88,26 @@ const updateApplication = asyncHandler(async (req, res) => {
         new ApiResponse(200, 'Application updated successfully', application)
     )
 });
+
+const getApplication = asyncHandler(async (req, res) => {
+    const applicationId = req.params.id;
+    const application = await Application.findById(applicationId).populate('userId postId', '-password -refreshToken -isClient -createdAt -updatedAt');
+    if(!application){
+        return res.status(404).json(
+            new ApiError(404, 'Application not found')
+        )
+    }
+    return res.status(200).json(
+        new ApiResponse(200, 'Application fetched successfully', application)
+    )
+})
 export { 
     createApplication,
     getApplications,
     myApplications,
     deleteApplication,
-    updateApplication
+    updateApplication,
+    getApplication
  };
 
 //  .populate('userId' , '-password -refreshToken -isClient -createdAt -updatedAt');
